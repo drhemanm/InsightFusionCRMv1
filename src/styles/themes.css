@@ -1,0 +1,84 @@
+/* Theme Variables */
+:root {
+  --primary-color: #3B82F6;
+  --secondary-color: #1E40AF;
+  --accent-color: #60A5FA;
+  --background-color: #F3F4F6;
+}
+
+/* Theme Classes */
+.theme-space {
+  --text-primary: #FFFFFF;
+  --text-secondary: #CBD5E1;
+  --border-color: rgba(255, 255, 255, 0.1);
+}
+
+.theme-medieval {
+  --text-primary: #FEF3C7;
+  --text-secondary: #D97706;
+  --border-color: rgba(217, 119, 6, 0.2);
+}
+
+.theme-sports {
+  --text-primary: #1E293B;
+  --text-secondary: #64748B;
+  --border-color: #E2E8F0;
+}
+
+.theme-nature {
+  --text-primary: #064E3B;
+  --text-secondary: #065F46;
+  --border-color: rgba(6, 95, 70, 0.1);
+}
+
+/* Apply Theme */
+body {
+  background-color: var(--background-color);
+  color: var(--text-primary);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.bg-primary {
+  background-color: var(--primary-color);
+}
+
+.bg-secondary {
+  background-color: var(--secondary-color);
+}
+
+.text-primary {
+  color: var(--text-primary);
+}
+
+.text-secondary {
+  color: var(--text-secondary);
+}
+
+.border-themed {
+  border-color: var(--border-color);
+}
+
+.accent-themed {
+  color: var(--accent-color);
+}
+
+/* Component Theming */
+.button-primary {
+  background-color: var(--primary-color);
+  color: var(--text-primary);
+}
+
+.button-secondary {
+  background-color: var(--secondary-color);
+  color: var(--text-primary);
+}
+
+.card {
+  background-color: var(--background-color);
+  border-color: var(--border-color);
+}
+
+/* Transitions */
+.theme-transition {
+  transition: all 0.3s ease-in-out;
+}
