@@ -2,8 +2,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Brain, Mail, Lock, Eye, EyeOff, Phone, Calendar, AlertCircle } from 'lucide-react';
-import { PasswordStrengthIndicator } from './PasswordStrengthIndicator';
-import { SocialSignUp } from './SocialSignUp';
+//import { PasswordStrengthIndicator } from './PasswordStrengthIndicator';
+//import { SocialSignUp } from './SocialSignUp';
 import { useAuthStore } from '../../store/authStore';
 
 interface FormData {
