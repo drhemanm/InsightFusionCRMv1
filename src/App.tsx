@@ -1,21 +1,8 @@
-// src/App.tsx - Updated with Supabase Auth Initialization
+// src/App.tsx - Minimal Auth Test
 import React, { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore, initializeAuth } from './store/authStore';
-import { Header } from './components/layout/Header';
-import { Dashboard } from './components/dashboard/Dashboard';
-import { LoginForm } from './components/auth/LoginForm';
 import { SignUpPage } from './components/auth/SignUpPage';
-import { Settings } from './components/settings/Settings';
-import { PrivateRoute } from './components/auth/PrivateRoute';
-import { ContactList } from './components/contacts/ContactList';
-import { DealPipeline } from './components/deals/DealPipeline';
-import { TaskDashboard } from './components/tasks/TaskDashboard';
-import { InboxView } from './components/communication/InboxView';
-import { FeaturesOverview } from './components/features/FeaturesOverview';
-import { AutomationSuggestions } from './components/workflow/AutomationSuggestions';
-import { OrganizationDashboard } from './components/organization/OrganizationDashboard';
-import { Documentation } from './components/docs/Documentation';
 
 const App: React.FC = () => {
   const { user, isLoading, isInitialized } = useAuthStore();
@@ -24,6 +11,8 @@ const App: React.FC = () => {
   useEffect(() => {
     initializeAuth();
   }, []);
+
+  console.log('App render - isInitialized:', isInitialized, 'isLoading:', isLoading, 'user:', user);
 
   // Show loading spinner while initializing auth
   if (!isInitialized || isLoading) {
@@ -41,72 +30,16 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {isAuthenticated && <Header />}
+      <div className="p-4">
+        <h1>Auth Test Page</h1>
+        <p>Authenticated: {isAuthenticated ? 'Yes' : 'No'}</p>
+        <p>User: {user?.email || 'None'}</p>
+      </div>
       
-      <main className={`${isAuthenticated ? 'pt-16' : ''}`}>
+      <main>
         <Routes>
-          <Route path="/" element={
-            isAuthenticated ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />
-          } />
-          <Route path="/login" element={
-            isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginForm />
-          } />
-          <Route path="/signup" element={
-            isAuthenticated ? <Navigate to="/dashboard" replace /> : <SignUpPage />
-          } />
-          <Route path="/register" element={<Navigate to="/signup" replace />} />
-          
-          {/* Protected Routes */}
-          <Route path="/dashboard" element={
-            <PrivateRoute>
-              <Dashboard />
-            </PrivateRoute>
-          } />
-          <Route path="/contacts" element={
-            <PrivateRoute>
-              <ContactList />
-            </PrivateRoute>
-          } />
-          <Route path="/deals" element={
-            <PrivateRoute>
-              <DealPipeline />
-            </PrivateRoute>
-          } />
-          <Route path="/tasks" element={
-            <PrivateRoute>
-              <TaskDashboard />
-            </PrivateRoute>
-          } />
-          <Route path="/messages" element={
-            <PrivateRoute>
-              <InboxView />
-            </PrivateRoute>
-          } />
-          <Route path="/organization" element={
-            <PrivateRoute>
-              <OrganizationDashboard />
-            </PrivateRoute>
-          } />
-          <Route path="/docs" element={
-            <PrivateRoute>
-              <Documentation />
-            </PrivateRoute>
-          } />
-          <Route path="/features" element={
-            <PrivateRoute>
-              <FeaturesOverview />
-            </PrivateRoute>
-          } />
-          <Route path="/automation" element={
-            <PrivateRoute>
-              <AutomationSuggestions context={{ screen: 'automation' }} />
-            </PrivateRoute>
-          } />
-          <Route path="/settings/*" element={
-            <PrivateRoute>
-              <Settings />
-            </PrivateRoute>
-          } />
+          <Route path="/" element={<Navigate to="/signup" replace />} />
+          <Route path="/signup" element={<SignUpPage />} />
         </Routes>
       </main>
     </div>
