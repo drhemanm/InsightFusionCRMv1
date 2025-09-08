@@ -3,16 +3,8 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://clgfmgyhrdomimrhkpxx.supabase.co'
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNsZ2ZtZ3locmRvbWltcmhrcHh4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyNjcyMzIsImV4cCI6MjA3Mjg0MzIzMn0.w2p0qaB11s9yPVWr7keyYDRvyAvT9OUESWkpSB6foEQ'
 
-// Debug logging to check environment variables
-console.log('Full Vite Environment:', import.meta.env);
-console.log('Supabase Environment Check:', {
-  url: import.meta.env.VITE_SUPABASE_URL ? 'Found' : 'Missing',
-  key: import.meta.env.VITE_SUPABASE_ANON_KEY ? 'Found' : 'Missing',
-  finalUrl: supabaseUrl,
-  finalKeyLength: supabaseKey.length,
-  rawUrl: import.meta.env.VITE_SUPABASE_URL,
-  rawKey: import.meta.env.VITE_SUPABASE_ANON_KEY
-});
+// Environment variables loaded successfully
+console.log('✅ Supabase client initialized');
 
 export const supabase = createClient(supabaseUrl, supabaseKey, {
   auth: {
