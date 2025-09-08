@@ -66,7 +66,6 @@ export const useAuthStore = create<AuthState>()(
       loginWithGoogle: async () => {
         set({ isLoading: true, error: null });
         try {
-          // Import supabase here to avoid circular dependency
           const { supabase } = await import('../lib/supabase');
           
           const { error } = await supabase.auth.signInWithOAuth({
@@ -77,9 +76,6 @@ export const useAuthStore = create<AuthState>()(
           });
 
           if (error) throw error;
-
-          // The actual user setup will happen in the OAuth callback
-          // For now, just indicate the process started successfully
           set({ isLoading: false });
           return true;
         } catch (error) {
@@ -185,8 +181,6 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true, error: null });
         try {
           await AuthService.updateProfile(updates);
-          
-          // Update the user in state
           const currentUser = get().user;
           if (currentUser) {
             set({ 
@@ -217,12 +211,10 @@ export const useAuthStore = create<AuthState>()(
   )
 );
 
-// Initialize auth state on app load
 export const initializeAuth = async () => {
   const store = useAuthStore.getState();
   await store.getCurrentUser();
   
-  // Set up auth state change listener
   AuthService.onAuthStateChange((user) => {
     useAuthStore.setState({
       user,
