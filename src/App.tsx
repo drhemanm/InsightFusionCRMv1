@@ -1,4 +1,4 @@
-// src/App.tsx - Updated for Supabase
+// src/App.tsx - Debug Version
 import React, { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore, initializeAuth } from './store/authStore';
@@ -20,13 +20,17 @@ import { Documentation } from './components/docs/Documentation';
 const App: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuthStore();
 
+  console.log('App render:', { isAuthenticated, isLoading });
+
   // Initialize auth on app start
   useEffect(() => {
+    console.log('Initializing auth...');
     initializeAuth();
   }, []);
 
   // Show loading spinner while checking auth
   if (isLoading) {
+    console.log('Showing loading spinner');
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -37,6 +41,8 @@ const App: React.FC = () => {
     );
   }
 
+  console.log('Rendering main app');
+  
   return (
     <div className="min-h-screen bg-gray-50">
       {isAuthenticated && <Header />}
