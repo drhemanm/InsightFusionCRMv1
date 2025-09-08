@@ -1,5 +1,5 @@
-// src/App.tsx - Simple Fixed Version
-import React, { useEffect, useState } from 'react';
+// src/App.tsx - Fixed Version
+import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './store/authStore';
 import { Header } from './components/layout/Header';
@@ -18,14 +18,92 @@ import { OrganizationDashboard } from './components/organization/OrganizationDas
 import { Documentation } from './components/docs/Documentation';
 
 const App: React.FC = () => {
-  const { isAuthenticated } = useAuthStore();
-  const [appReady, setAppReady] = useState(false);
+  const { isAuthenticated, isLoading } = useAuthStore();
 
-  // Simple initialization without auth calls
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setAppReady(true);
-    }, 1000);
-    
-    return () => clearTimeout(timer);
-  }, []);
+  // Show loading spinner while checking auth
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {isAuthenticated && <Header />}
+      
+      <main className={`${isAuthenticated ? 'pt-16' : ''}`}>
+        <Routes>
+          <Route path="/" element={
+            isAuthenticated ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />
+          } />
+          <Route path="/login" element={
+            isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginForm />
+          } />
+          <Route path="/signup" element={
+            isAuthenticated ? <Navigate to="/dashboard" replace /> : <SignUpPage />
+          } />
+          <Route path="/register" element={<Navigate to="/signup" replace />} />
+          
+          {/* Protected Routes */}
+          <Route path="/dashboard" element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          } />
+          <Route path="/contacts" element={
+            <PrivateRoute>
+              <ContactList />
+            </PrivateRoute>
+          } />
+          <Route path="/deals" element={
+            <PrivateRoute>
+              <DealPipeline />
+            </PrivateRoute>
+          } />
+          <Route path="/tasks" element={
+            <PrivateRoute>
+              <TaskDashboard />
+            </PrivateRoute>
+          } />
+          <Route path="/messages" element={
+            <PrivateRoute>
+              <InboxView />
+            </PrivateRoute>
+          } />
+          <Route path="/organization" element={
+            <PrivateRoute>
+              <OrganizationDashboard />
+            </PrivateRoute>
+          } />
+          <Route path="/docs" element={
+            <PrivateRoute>
+              <Documentation />
+            </PrivateRoute>
+          } />
+          <Route path="/features" element={
+            <PrivateRoute>
+              <FeaturesOverview />
+            </PrivateRoute>
+          } />
+          <Route path="/automation" element={
+            <PrivateRoute>
+              <AutomationSuggestions context={{ screen: 'automation' }} />
+            </PrivateRoute>
+          } />
+          <Route path="/settings/*" element={
+            <PrivateRoute>
+              <Settings />
+            </PrivateRoute>
+          } />
+        </Routes>
+      </main>
+    </div>
+  );
+};
+
+export default App;
