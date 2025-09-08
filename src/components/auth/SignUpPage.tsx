@@ -1,5 +1,6 @@
+// src/components/auth/SignUpPage.tsx - Updated for Supabase
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Brain, Mail, Lock, Eye, EyeOff, Phone, Calendar, AlertCircle } from 'lucide-react';
 import { PasswordStrengthIndicator } from './PasswordStrengthIndicator';
 import { SocialSignUp } from './SocialSignUp';
@@ -13,12 +14,15 @@ interface FormData {
   confirmPassword: string;
   dateOfBirth: string;
   phone?: string;
+  organizationName?: string; // Added for Supabase
+  jobTitle?: string; // Added for Supabase
   acceptTerms: boolean;
   acceptPrivacy: boolean;
 }
 
 export const SignUpPage: React.FC = () => {
-  const { register, isLoading, error } = useAuthStore();
+  const navigate = useNavigate();
+  const { register, isLoading, error, clearError } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
@@ -28,6 +32,8 @@ export const SignUpPage: React.FC = () => {
     confirmPassword: '',
     dateOfBirth: '',
     phone: '',
+    organizationName: '', // New field
+    jobTitle: '', // New field
     acceptTerms: false,
     acceptPrivacy: false
   });
@@ -85,9 +91,25 @@ export const SignUpPage: React.FC = () => {
     e.preventDefault();
     if (!validateForm()) return;
 
+    clearError(); // Clear any previous errors
+
     try {
-      await register(formData);
-      // Redirect handled by auth store
+      // Register with Supabase using the enhanced auth store
+      const success = await register({
+        email: formData.email,
+        password: formData.password,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        organizationName: formData.organizationName,
+        jobTitle: formData.jobTitle,
+        phone: formData.phone
+      });
+
+      if (success) {
+        // Store KYC data for backwards compatibility if needed
+        // You can add this to the profile later via updateProfile
+        navigate('/dashboard');
+      }
     } catch (error) {
       console.error('Registration failed:', error);
     }
@@ -104,7 +126,7 @@ export const SignUpPage: React.FC = () => {
             </div>
 
             <h2 className="text-2xl font-bold text-white text-center mb-8">
-              Create Your Account
+              Join InsightFusion CRM
             </h2>
 
             <SocialSignUp />
@@ -129,7 +151,7 @@ export const SignUpPage: React.FC = () => {
                     required
                     value={formData.firstName}
                     onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                    className="mt-1 block w-full rounded-lg border-gray-600 bg-black/30 text-white"
+                    className="mt-1 block w-full rounded-lg border-gray-600 bg-black/30 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                   {errors.firstName && (
                     <p className="mt-1 text-sm text-red-400">{errors.firstName}</p>
@@ -145,7 +167,7 @@ export const SignUpPage: React.FC = () => {
                     required
                     value={formData.lastName}
                     onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                    className="mt-1 block w-full rounded-lg border-gray-600 bg-black/30 text-white"
+                    className="mt-1 block w-full rounded-lg border-gray-600 bg-black/30 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                   {errors.lastName && (
                     <p className="mt-1 text-sm text-red-400">{errors.lastName}</p>
@@ -164,12 +186,39 @@ export const SignUpPage: React.FC = () => {
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="pl-10 block w-full rounded-lg border-gray-600 bg-black/30 text-white"
+                    className="pl-10 block w-full rounded-lg border-gray-600 bg-black/30 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
                 {errors.email && (
                   <p className="mt-1 text-sm text-red-400">{errors.email}</p>
                 )}
+              </div>
+
+              {/* New CRM-specific fields */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300">
+                  Organization Name (Optional)
+                </label>
+                <input
+                  type="text"
+                  value={formData.organizationName}
+                  onChange={(e) => setFormData({ ...formData, organizationName: e.target.value })}
+                  className="mt-1 block w-full rounded-lg border-gray-600 bg-black/30 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Your company name"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300">
+                  Job Title (Optional)
+                </label>
+                <input
+                  type="text"
+                  value={formData.jobTitle}
+                  onChange={(e) => setFormData({ ...formData, jobTitle: e.target.value })}
+                  className="mt-1 block w-full rounded-lg border-gray-600 bg-black/30 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Your job title"
+                />
               </div>
 
               <div>
@@ -183,7 +232,7 @@ export const SignUpPage: React.FC = () => {
                     required
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    className="pl-10 pr-10 block w-full rounded-lg border-gray-600 bg-black/30 text-white"
+                    className="pl-10 pr-10 block w-full rounded-lg border-gray-600 bg-black/30 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                   <button
                     type="button"
@@ -210,7 +259,7 @@ export const SignUpPage: React.FC = () => {
                     required
                     value={formData.confirmPassword}
                     onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                    className="pl-10 block w-full rounded-lg border-gray-600 bg-black/30 text-white"
+                    className="pl-10 block w-full rounded-lg border-gray-600 bg-black/30 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
                 {errors.confirmPassword && (
@@ -229,7 +278,7 @@ export const SignUpPage: React.FC = () => {
                     required
                     value={formData.dateOfBirth}
                     onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
-                    className="pl-10 block w-full rounded-lg border-gray-600 bg-black/30 text-white"
+                    className="pl-10 block w-full rounded-lg border-gray-600 bg-black/30 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
                 {errors.dateOfBirth && (
@@ -247,7 +296,7 @@ export const SignUpPage: React.FC = () => {
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="pl-10 block w-full rounded-lg border-gray-600 bg-black/30 text-white"
+                    className="pl-10 block w-full rounded-lg border-gray-600 bg-black/30 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="+1234567890"
                   />
                 </div>
@@ -297,8 +346,8 @@ export const SignUpPage: React.FC = () => {
 
               <button
                 type="submit"
-                disabled={isLoading}
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                disabled={isLoading || formData.password !== formData.confirmPassword}
+                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 transition-colors"
               >
                 {isLoading ? 'Creating Account...' : 'Create Account'}
               </button>
