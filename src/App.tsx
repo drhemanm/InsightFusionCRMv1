@@ -1,7 +1,7 @@
-// src/App.tsx - Fixed Version
-import React from 'react';
+// src/App.tsx - Updated with Supabase Auth Initialization
+import React, { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useAuthStore } from './store/authStore';
+import { useAuthStore, initializeAuth } from './store/authStore';
 import { Header } from './components/layout/Header';
 import { Dashboard } from './components/dashboard/Dashboard';
 import { LoginForm } from './components/auth/LoginForm';
@@ -18,19 +18,26 @@ import { OrganizationDashboard } from './components/organization/OrganizationDas
 import { Documentation } from './components/docs/Documentation';
 
 const App: React.FC = () => {
-  const { isAuthenticated, isLoading } = useAuthStore();
+  const { user, isLoading, isInitialized } = useAuthStore();
 
-  // Show loading spinner while checking auth
-  if (isLoading) {
+  // Initialize Supabase auth when app starts
+  useEffect(() => {
+    initializeAuth();
+  }, []);
+
+  // Show loading spinner while initializing auth
+  if (!isInitialized || isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto"></div>
+          <p className="mt-4 text-white">Initializing InsightFusion...</p>
         </div>
       </div>
     );
   }
+
+  const isAuthenticated = !!user;
 
   return (
     <div className="min-h-screen bg-gray-50">
